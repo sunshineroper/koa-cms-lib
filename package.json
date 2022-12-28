@@ -1,0 +1,32 @@
+{
+  "name": "koa-cms-lib",
+  "version": "1.0.0",
+  "description": "",
+  "author": "",
+  "license": "ISC",
+  "homepage": "https://github.com/sunshineroper/koa-cms-lib#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/sunshineroper/koa-cms-lib.git"
+  },
+  "bugs": {
+    "url": "https://github.com/sunshineroper/koa-cms-lib/issues"
+  },
+  "keywords": [],
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "dependencies": {
+    "@antfu/eslint-config": "^0.34.0",
+    "class-validator": "^0.14.0",
+    "koa": "^2.14.1",
+    "lodash": "^4.17.21"
+  },
+  "devDependencies": {
+    "@types/jest": "^26.0.15",
+    "@types/koa": "^2.13.5",
+    "jest": "^26.6.2",
+    "ts-jest": "^26.4.3"
+  }
+}
