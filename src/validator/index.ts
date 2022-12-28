@@ -1,6 +1,6 @@
 import validator from 'validator'
 import { get } from 'lodash'
-import { getValidatorPropertykeys } from '../utils'
+import { getValidatorPropertykeys, isString } from '../utils'
 export class Validator {
   private data: Record<string, any>
   private errors: any[] = []
@@ -32,12 +32,25 @@ export class Validator {
       }
     })
     for (const key of keys) {
+      let optional = false
+      let message
       const val = this[key]
       const [dataKey, dataValue] = this.findInDataValAndKey(key)
-      const valid: boolean = await val.validate(this.data[dataKey][key])
-      if (!valid)
-        this.errors.push({ key, message: val.message })
+      if (this.isOptional(dataValue)) {
+        if (val.optional)
+          optional = true
+        else
+          message = val.message
+        if (!optional)
+          this.errors.push({ key, message: message || `${key}不能为空` })
+      }
+      else {
+        const valid: boolean = await val.validate(this.data[dataKey][key])
+        if (!valid)
+          this.errors.push({ key, message: val.message })
+      }
     }
+    console.log(this.errors)
   }
 
   private findInDataValAndKey(key) {
@@ -50,13 +63,30 @@ export class Validator {
     }
     return []
   }
+
+  private isOptional(val) {
+    // eslint-disable-next-line no-void
+    if (val === void 0)
+      return true
+    if (val === null)
+      return true
+    if (isString(val))
+      return val === '' || val.trim() === ''
+    return false
+  }
 }
 
 export class Rule {
   validateFunction: string | Function
   message: string
+  isOptional = false
   constructor(validateFunction: string | Function, message?: string) {
-    this.validateFunction = validateFunction
+    if (isString(validateFunction)) {
+      if (validateFunction === 'isOptional')
+        this.isOptional = true
+      this.validateFunction = validateFunction
+    }
+
     this.message = message
   }
 
@@ -67,11 +97,13 @@ export class Rule {
 }
 
 export class TestValidator extends Validator {
-  cc: Rule
+  email: Rule
+  id: Rule
   dd: string
   constructor() {
     super()
-    this.cc = new Rule('isEmail', '邮箱格式错误,请重新输入')
+    this.email = new Rule('isEmail', '邮箱格式错误,请重新输入')
+    // this.id = new Rule('isInt', '用户Id必须为数字')
     this.dd = '2'
   }
 }
