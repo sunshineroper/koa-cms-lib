@@ -14,6 +14,7 @@ export class Validator {
       params: (ctx.request as Record<string, any>).params,
     }
     await this.checkRules()
+    return this.errors
   }
 
   private async checkRules() {
@@ -41,15 +42,15 @@ export class Validator {
       if (this.isOptional(dataValue)) {
         if (Array.isArray(val)) {
           for (const v of val) {
-            if (!stopFlag && v.optional) {
+            if (v.isOptional)
               optional = true
-              stopFlag = true
+            else
+            if (!message)
               message = v.message
-            }
           }
         }
         else {
-          if (val.optional)
+          if (val.isOptional)
             optional = true
           else
             message = val.message
@@ -58,12 +59,26 @@ export class Validator {
           this.errors.push({ key, message: message || `${key}不能为空` })
       }
       else {
-        const valid: boolean = await val.validate(this.data[dataKey][key])
-        if (!valid)
-          this.errors.push({ key, message: val.message })
+        if (Array.isArray(val)) {
+          for (const v of val) {
+            if (!stopFlag && !v.isOptional) {
+              const valid: boolean = await v.validate(this.data[dataKey][key])
+              if (!valid) {
+                stopFlag = true
+                this.errors.push({ key, message: v.message })
+              }
+            }
+          }
+        }
+        else {
+          if (!val.isOptional) {
+            const valid: boolean = await val.validate(this.data[dataKey][key])
+            if (!valid)
+              this.errors.push({ key, message: val.message })
+          }
+        }
       }
     }
-    console.log(this.errors)
   }
 
   private findInDataValAndKey(key) {
@@ -93,32 +108,19 @@ export class Rule {
   validateFunction: string | Function
   message: string
   isOptional = false
-  constructor(validateFunction: string | Function, message?: string) {
+  options: any
+  constructor(validateFunction: string | Function, message?: string, ...options) {
     if (isString(validateFunction)) {
       if (validateFunction === 'isOptional')
         this.isOptional = true
       this.validateFunction = validateFunction
     }
-
+    this.options = options
     this.message = message
   }
 
   async validate(value: any) {
     if (typeof this.validateFunction !== 'function')
-      return await validator[this.validateFunction](value)
-  }
-}
-
-export class TestValidator extends Validator {
-  email: Rule
-  id: Rule
-  dd: string
-  age: Rule[]
-  constructor() {
-    super()
-    this.email = new Rule('isEmail', '邮箱格式错误,请重新输入')
-    this.id = new Rule('isInt')
-    this.dd = '2'
-    this.age = [new Rule('isOption'), new Rule('isInt', '年纪必须是数字类型')]
+      return await validator[this.validateFunction](value, ...this.options)
   }
 }
