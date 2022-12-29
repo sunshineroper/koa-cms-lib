@@ -23,9 +23,10 @@ export class Validator {
         if (val.length === 0)
           return false
         for (const v of val) {
-          if (v instanceof Rule)
+          if (!(v instanceof Rule))
             throw new Error('must be a instance Rule')
         }
+        return true
       }
       else {
         return val instanceof Rule
@@ -34,13 +35,25 @@ export class Validator {
     for (const key of keys) {
       let optional = false
       let message
+      let stopFlag = false
       const val = this[key]
       const [dataKey, dataValue] = this.findInDataValAndKey(key)
       if (this.isOptional(dataValue)) {
-        if (val.optional)
-          optional = true
-        else
-          message = val.message
+        if (Array.isArray(val)) {
+          for (const v of val) {
+            if (!stopFlag && v.optional) {
+              optional = true
+              stopFlag = true
+              message = v.message
+            }
+          }
+        }
+        else {
+          if (val.optional)
+            optional = true
+          else
+            message = val.message
+        }
         if (!optional)
           this.errors.push({ key, message: message || `${key}不能为空` })
       }
@@ -100,10 +113,12 @@ export class TestValidator extends Validator {
   email: Rule
   id: Rule
   dd: string
+  age: Rule[]
   constructor() {
     super()
     this.email = new Rule('isEmail', '邮箱格式错误,请重新输入')
-    // this.id = new Rule('isInt', '用户Id必须为数字')
+    this.id = new Rule('isInt')
     this.dd = '2'
+    this.age = [new Rule('isOption'), new Rule('isInt', '年纪必须是数字类型')]
   }
 }
