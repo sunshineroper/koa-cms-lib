@@ -1,24 +1,33 @@
 import validator from 'validator'
-import { get } from 'lodash'
+import { cloneDeep, get, unset } from 'lodash'
 import { getValidatorPropertykeys, isString } from '../utils'
 export class Validator {
   private data: Record<string, any>
   private errors: any[] = []
+  private parsed: Record<string, any>
   constructor() {
   }
 
-  public async validate(ctx?: any) {
+  public async validate(ctx: any, alias: Record<string, any> = {}) {
     this.data = {
       query: ctx.request.query,
       body: (ctx.request as Record<string, any>).body,
-      params: (ctx.request as Record<string, any>).params,
+      params: (ctx.request as Record<string, any>).param,
+      header: (ctx.request as Record<string, any>).header,
+
     }
-    await this.checkRules()
-    return this.errors
+    this.parsed = {
+      ...cloneDeep(this.data),
+      default: {},
+    }
+    if (!await this.checkRules(alias))
+      return this.errors
+    else
+      return this
   }
 
-  private async checkRules() {
-    const keys = getValidatorPropertykeys(this, (k) => {
+  private async checkRules(alias) {
+    let keys = getValidatorPropertykeys(this, (k) => {
       const val = this[k]
       if (Array.isArray(val)) {
         if (val.length === 0)
@@ -33,6 +42,7 @@ export class Validator {
         return val instanceof Rule
       }
     })
+    keys = this.replace(keys, alias)
     for (const key of keys) {
       let optional = false
       let message
@@ -79,6 +89,7 @@ export class Validator {
         }
       }
     }
+    return this.errors.length === 0
   }
 
   private findInDataValAndKey(key) {
@@ -92,6 +103,21 @@ export class Validator {
     return []
   }
 
+  private replace(keys, alias) {
+    const aliasK = Object.keys(alias)
+    if (aliasK.length === 0)
+      return keys
+    const arr: string[] = []
+    for (const k of keys) {
+      if (alias[k]) {
+        this[alias[k]] = this[k]
+        unset(this, k)
+        arr.push(alias[k])
+      }
+    }
+    return arr
+  }
+
   private isOptional(val) {
     // eslint-disable-next-line no-void
     if (val === void 0)
@@ -101,6 +127,10 @@ export class Validator {
     if (isString(val))
       return val === '' || val.trim() === ''
     return false
+  }
+
+  get(path, defaultValue?) {
+    return get(this.data, path, defaultValue && defaultValue)
   }
 }
 
