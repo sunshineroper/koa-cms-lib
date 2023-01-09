@@ -1,4 +1,4 @@
-import { NotFound } from '../exception/http-exception'
+import { NotFound } from '../exception'
 describe('测试HttpException函数', () => {
   test('不传参数', async () => {
     const notFound = new NotFound()

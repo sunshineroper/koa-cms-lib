@@ -1,8 +1,26 @@
 {
   "compilerOptions": {
     "moduleResolution": "node",
-    "target": "es2020",
-    "esModuleInterop": true
-  }
-
+    "forceConsistentCasingInFileNames": true,
+    "noImplicitThis": false,
+    "skipLibCheck": true,
+    "target": "es2017",
+    "module": "commonjs",
+    "noImplicitAny": false,
+    "declaration": true,
+    "allowJs": true,
+    "outDir": "./s",
+    "rootDir": "./src",
+    "importHelpers": true,
+    "strict": true,
+    "typeRoots": ["./node_modules/@types"],
+    "esModuleInterop": true,
+    "experimentalDecorators": true,
+    "emitDecoratorMetadata": true
+  },
+  "exclude": [
+    "node_modules",
+    "src/**/__test__"
+  ],
+  "include": ["src"]
 }

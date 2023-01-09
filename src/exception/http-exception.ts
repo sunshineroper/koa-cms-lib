@@ -1,20 +1,20 @@
 import { isInt } from '../utils/'
-import { HttpStatus } from '../enums/http-enums'
+import { HttpStatus } from '../enums'
 const codeMessage = {
   getMessage(code: number) {
     return this[code]
   },
   9999: '服务器未知错误',
+  10030: '参数错误',
   10070: '禁止操作',
 }
 interface ex {
   code?: number
-  message?: string
+  message?: any
 }
 export class HttpException extends Error {
   code = 9999
-  number = 500
-  stauts: number
+  stauts = 500
   constructor() {
     super()
   }
@@ -36,11 +36,21 @@ export class HttpException extends Error {
 }
 
 export class NotFound extends HttpException {
-  constructor(ex?: number | ex) {
+  stauts = HttpStatus.BAD_REQUEST
+  code = 10070
+  message = codeMessage.getMessage(this.code)
+  constructor(ex?: any) {
     super()
-    this.stauts = HttpStatus.NOT_FOUND
-    this.code = 10070
-    this.message = codeMessage.getMessage(this.code)
+    this.exceptionHandler(ex)
+  }
+}
+
+export class ParamtersException extends HttpException {
+  stauts = HttpStatus.NOT_FOUND
+  code = 10030
+  message = codeMessage.getMessage(this.code)
+  constructor(ex?: any) {
+    super()
     this.exceptionHandler(ex)
   }
 }

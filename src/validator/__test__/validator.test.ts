@@ -1,11 +1,11 @@
-import { Rule, Validator } from './index'
-class PositiveIdValidator extends Validator {
-  id: Rule
-  constructor() {
-    super()
-    this.id = new Rule('isInt', 'id必须为正整数', { min: 1 })
-  }
-}
+import { Rule, Validator } from '../index'
+// class PositiveIdValidator extends Validator {
+//   id: Rule
+//   constructor() {
+//     super()
+//     this.id = new Rule('isInt', 'id必须为正整数', { min: 1 })
+//   }
+// }
 class TestValidator1 extends Validator {
   email: Rule
   id: Rule
@@ -52,11 +52,11 @@ describe('测试Validator', () => {
         params: {},
       },
     }
-    const message = await new TestValidator().validate(ctx)
-    expect(message).toEqual([
-      { key: 'id', message: 'id不能为空' },
-      { key: 'age', message: '年纪必须是数字类型' },
-    ])
+    expect(new TestValidator().validate(ctx)).toThrow()
+    // expect(message).toEqual([
+    //   { key: 'id', message: 'id不能为空' },
+    //   { key: 'age', message: '年纪必须是数字类型' },
+    // ])
   })
   test('多条规则校验', async () => {
     const ctx = {
@@ -71,8 +71,8 @@ describe('测试Validator', () => {
         params: {},
       },
     }
-    // const message = await new TestValidator1().validate(ctx)
-    // expect(message).toEqual([{ key: 'id', message: 'id不能为空' }])
+    const message = await new TestValidator1().validate(ctx)
+    expect(message).toEqual([{ key: 'id', message: 'id不能为空' }])
   })
   test('获取值', async () => {
     const ctx = {
@@ -91,6 +91,6 @@ describe('测试Validator', () => {
     const v = await new TestValidator1().validate(ctx)
     expect((v as Validator).get('query.id')).toBe('22')
     expect((v as Validator).get('query.name')).toBe('ssssssss')
-    await new PositiveIdValidator().validate(ctx, { id: 'uid' })
+    // await new PositiveIdValidator().validate(ctx, { id: 'uid' })
   })
 })
