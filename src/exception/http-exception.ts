@@ -1,12 +1,13 @@
-import { isInt } from '../utils/'
+import { isFunction, isInt } from '../utils/'
 import { HttpStatus } from '../enums'
-const codeMessage = {
-  getMessage(code: number) {
+import { config } from '../config'
+import type { CodeMessage } from '../types'
+const codeMessage = config.getItem('codeMessage') as CodeMessage
+
+if (codeMessage && !isFunction(codeMessage.getMessage)) {
+  codeMessage.getMessage = function (code: number) {
     return this[code]
-  },
-  9999: '服务器未知错误',
-  10030: '参数错误',
-  10070: '禁止操作',
+  }
 }
 interface ex {
   code?: number

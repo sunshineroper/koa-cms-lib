@@ -1,4 +1,8 @@
-import { NotFound } from '../exception'
+import { NotFound } from '../http-exception'
+import { config } from '../../config'
+import { codeMessage } from './code'
+config.setItem('codeMessage', codeMessage)
+
 describe('测试HttpException函数', () => {
   test('不传参数', async () => {
     const notFound = new NotFound()
