@@ -18,5 +18,5 @@
     "node_modules",
     "lib/**/__test__"
   ],
-  "include": ["src"]
+  "include": ["lib"]
 }
