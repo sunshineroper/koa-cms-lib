@@ -6,7 +6,7 @@
     "declaration": true,
     "allowJs": true,
     "outDir": "./dist",
-    "rootDir": "./src",
+    "rootDir": "./lib",
     "importHelpers": true,
     "strict": true,
     "typeRoots": ["./node_modules/@types"],
