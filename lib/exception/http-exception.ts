@@ -15,7 +15,7 @@ interface ex {
 }
 export class HttpException extends Error {
   code = 9999
-  stauts = 500
+  status = 500
   constructor() {
     super()
   }
@@ -47,7 +47,7 @@ export class NotFound extends HttpException {
 }
 
 export class ParamtersException extends HttpException {
-  stauts = HttpStatus.NOT_FOUND
+  status = HttpStatus.NOT_FOUND
   code = 10030
   message = codeMessage.getMessage(this.code)
   constructor(ex?: any) {

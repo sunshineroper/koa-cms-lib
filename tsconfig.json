@@ -5,7 +5,7 @@
     "noImplicitAny": false,
     "declaration": true,
     "allowJs": true,
-    "outDir": "./dist",
+    "outDir": "./playground/dist",
     "rootDir": "./lib",
     "importHelpers": true,
     "strict": true,
