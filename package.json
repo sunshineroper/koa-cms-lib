@@ -13,7 +13,7 @@
     "url": "https://github.com/sunshineroper/koa-cms-lib/issues"
   },
   "keywords": [],
-  "main": "index.js",
+  "main": "src/dist/index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "rimraf dist/ & tsc",
