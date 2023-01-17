@@ -16,7 +16,8 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "rimraf dist/ & tsc"
+    "build": "rimraf dist/ & tsc",
+    "build:dev": "rimraf playground/dist/ & tsc"
   },
   "dependencies": {
     "@antfu/eslint-config": "^0.34.0",
