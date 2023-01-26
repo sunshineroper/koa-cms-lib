@@ -81,7 +81,7 @@ export class Validator {
         if (!optional)
           this.errors.push({ key, message: message || `${key}不能为空` })
         else
-          this.parsed[dataKey][key] = val.parsedValue
+          this.parsed.default[key] = val.parsedValue
       }
       else {
         if (Array.isArray(val)) {
