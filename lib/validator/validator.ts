@@ -15,7 +15,7 @@ export class Validator {
     this.data = {
       query: ctx.request.query,
       body: (ctx.request as Record<string, any>).body,
-      params: (ctx.request as Record<string, any>).param,
+      params: (ctx.request as Record<string, any>).params,
       header: (ctx.request as Record<string, any>).header,
 
     }
@@ -80,6 +80,8 @@ export class Validator {
         }
         if (!optional)
           this.errors.push({ key, message: message || `${key}不能为空` })
+        else
+          this.parsed[dataKey][key] = val.parsedValue
       }
       else {
         if (Array.isArray(val)) {
@@ -90,6 +92,9 @@ export class Validator {
                 stopFlag = true
                 this.errors.push({ key, message: v.message })
               }
+              // eslint-disable-next-line no-void
+              if ((val as Record<string, any>).parsedValue !== void 0)
+                this.parsed[dataKey][key] = (val as Record<string, any>).parsedValue
             }
           }
         }
@@ -98,6 +103,8 @@ export class Validator {
             const valid: boolean = await val.validate(this.data[dataKey][key])
             if (!valid)
               this.errors.push({ key, message: val.message })
+            else
+              this.parsed[dataKey][key] = (val as Record<string, any>).parsedValue
           }
         }
       }
@@ -142,8 +149,19 @@ export class Validator {
     return false
   }
 
-  get(path, defaultValue?) {
-    return get(this.data, path, defaultValue && defaultValue)
+  get(path, parsed = true) {
+    let defaultValue
+    if (arguments.length >= 3)
+      // eslint-disable-next-line prefer-rest-params
+      defaultValue = arguments[2]
+    if (parsed) {
+      const key = get(this.parsed, path, defaultValue)
+      if (!this.isOptional(key))
+        return key
+    }
+    else {
+      return get(this.data, path, defaultValue && defaultValue)
+    }
   }
 }
 
@@ -152,6 +170,7 @@ export class Rule {
   message
   isOptional = false
   options: any
+  parsedValue: any
   constructor(validateFunction: string | Function, message?: string, ...options) {
     if (isString(validateFunction)) {
       if (validateFunction === 'isOptional')
@@ -164,7 +183,20 @@ export class Rule {
   }
 
   async validate(value: any) {
-    if (typeof this.validateFunction !== 'function')
-      return await validator[this.validateFunction](value, ...this.options)
+    if (typeof this.validateFunction === 'function') {
+      return this.validateFunction(value, ...this.options)
+    }
+    else {
+      switch (this.validateFunction) {
+        case 'isInt':
+          if (isString(value)) {
+            this.parsedValue = validator.toInt(value)
+            return validator.isInt(value, ...this.options)
+          }
+          break
+        default:
+          return await validator[this.validateFunction](value, ...this.options)
+      }
+    }
   }
 }
