@@ -1,6 +1,6 @@
 import validator from 'validator'
 import { cloneDeep, get, unset } from 'lodash'
-import { getValidatorPropertykeys, isString } from '../utils'
+import { getValidatorPropertykeys, isNotEmpty, isString } from '../utils'
 import { ParamtersException } from '../exception/http-exception'
 export class Validator {
   private data: Record<string, any>
@@ -194,6 +194,8 @@ export class Rule {
             return validator.isInt(value, ...this.options)
           }
           break
+        case 'isNotEmpty':
+          return isNotEmpty(value)
         default:
           return await validator[this.validateFunction](value, ...this.options)
       }
