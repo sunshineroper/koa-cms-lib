@@ -1,7 +1,7 @@
 import validator from 'validator'
 import { cloneDeep, get, unset } from 'lodash'
-import { getValidatorPropertykeys, isNotEmpty, isString } from '../utils'
-import { ParamtersException } from '../exception/http-exception'
+import { getValidatorMethodsName, getValidatorPropertykeys, isNotEmpty, isString } from '../utils'
+import { HttpException, ParamtersException } from '../exception/http-exception'
 export class Validator {
   private data: Record<string, any>
   private errors: any[] = []
@@ -107,6 +107,36 @@ export class Validator {
               this.parsed[dataKey][key] = (val as Record<string, any>).parsedValue
           }
         }
+      }
+    }
+    const validateFuncKeys = getValidatorMethodsName(this, (key) => {
+      return /validate([A-Z])\w+/g.test(key) && typeof this[key] === 'function'
+    })
+
+    for (const validateFunctionKey of validateFuncKeys) {
+      const customerValidateFunc = get(this, validateFunctionKey)
+      try {
+        let key
+        const v = await customerValidateFunc.call(this, this.data)
+        if (Array.isArray(v) && !v[0]) {
+          if (v[2])
+            key = v[2]
+          else
+            key = (validateFunctionKey as string).replace('validate', '')
+
+          this.errors.push({ key, message: v[1] })
+        }
+        else if (!v) {
+          key = (validateFunctionKey as string).replace('validate', '')
+          this.errors.push({ key, message: '参数错误' })
+        }
+      }
+      catch (error) {
+        const key = (validateFunctionKey as string).replace('validate', '')
+        if (error instanceof HttpException)
+          this.errors.push({ key, message: error.message })
+        else
+          this.errors.push({ key, message: '参数错误' })
       }
     }
     return this.errors.length === 0

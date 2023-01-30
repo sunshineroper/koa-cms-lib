@@ -10,6 +10,16 @@ export const getValidatorPropertykeys = (instance, filterFunc) => {
   const names: string[] = keys.filter(filterFunc)
   return names
 }
+
+export const getValidatorMethodsName = (obj, filterFunc) => {
+  const methodNames = new Set()
+  // eslint-disable-next-line no-cond-assign
+  while ((obj = Reflect.getPrototypeOf(obj))) {
+    const keys = Reflect.ownKeys(obj)
+    keys.forEach(k => methodNames.add(k))
+  }
+  return Array.from(methodNames.values()).filter(filterFunc)
+}
 export const readFile = (dir) => {
   let res: string[] = []
   const files = fs.readdirSync(dir)
