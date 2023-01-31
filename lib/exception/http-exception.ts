@@ -1,4 +1,4 @@
-import { isFunction, isInt } from '../utils/'
+import { isFunction, isInt, isString } from '../utils/'
 import { HttpStatus } from '../enums'
 import { config } from '../config'
 import type { CodeMessage } from '../types'
@@ -33,6 +33,9 @@ export class HttpException extends Error {
     else if (ex && ex.message) {
       this.message = ex.message
     }
+    else if (isString(ex)) {
+      this.message = ex
+    }
   }
 }
 
@@ -49,6 +52,16 @@ export class NotFound extends HttpException {
 export class ParamtersException extends HttpException {
   status = HttpStatus.NOT_FOUND
   code = 10030
+  message = codeMessage.getMessage(this.code)
+  constructor(ex?: any) {
+    super()
+    this.exceptionHandler(ex)
+  }
+}
+
+export class Success extends HttpException {
+  status = HttpStatus.CREATED
+  code = 0
   message = codeMessage.getMessage(this.code)
   constructor(ex?: any) {
     super()
