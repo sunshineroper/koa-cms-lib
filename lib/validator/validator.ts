@@ -103,7 +103,8 @@ export class Validator {
             const valid: boolean = await val.validate(this.data[dataKey][key])
             if (!valid)
               this.errors.push({ key, message: val.message })
-            else
+              // eslint-disable-next-line no-void
+            if ((val as Record<string, any>).parsedValue !== void 0)
               this.parsed[dataKey][key] = (val as Record<string, any>).parsedValue
           }
         }
@@ -135,8 +136,7 @@ export class Validator {
         const key = (validateFunctionKey as string).replace('validate', '')
         if (error instanceof HttpException)
           this.errors.push({ key, message: error.message })
-        else
-          this.errors.push({ key, message: '参数错误' })
+        this.errors.push({ key, message: '参数错误' })
       }
     }
     return this.errors.length === 0
