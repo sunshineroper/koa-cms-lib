@@ -1,4 +1,4 @@
-import { NotFound } from '../exception/http-exception'
+import { MethodNotAllowed, NotFound } from '../exception/http-exception'
 export const Logger = async (ctx, next) => {
   const now = new Date()
   try {
@@ -8,6 +8,8 @@ export const Logger = async (ctx, next) => {
     console.log(`[${ctx.method} -> ${ctx.url}] from: ${ctx.ip} consts ${ms}ms`)
     if (ctx.status === 404)
       ctx.app.emit('error', new NotFound(), ctx)
+    else if (ctx.status === 405)
+      ctx.app.emit('error', new MethodNotAllowed(), ctx)
   }
   catch (error) {
     ctx.app.emit('error', error, ctx)

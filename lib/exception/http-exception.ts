@@ -59,6 +59,16 @@ export class ParamtersException extends HttpException {
   }
 }
 
+export class MethodNotAllowed extends HttpException {
+  status = HttpStatus.METHOD_NOT_ALLOWED
+  code = 10080
+  message = codeMessage.getMessage(this.code)
+  constructor(ex?: any) {
+    super()
+    this.exceptionHandler(ex)
+  }
+}
+
 export class Success extends HttpException {
   status = HttpStatus.CREATED
   code = 0
