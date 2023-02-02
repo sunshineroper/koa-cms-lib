@@ -78,3 +78,23 @@ export class Success extends HttpException {
     this.exceptionHandler(ex)
   }
 }
+
+export class AuthFailed extends HttpException {
+  status = HttpStatus.UNAUTHORIZED
+  code = 10000
+  message = codeMessage.getMessage(this.code)
+  constructor(ex?: any) {
+    super()
+    this.exceptionHandler(ex)
+  }
+}
+
+export class TokenExpiredException extends HttpException {
+  status = HttpStatus.UNPROCESSABLE_ENTITY
+  code = 10050
+  message = codeMessage.getMessage(this.code)
+  constructor(ex?: any) {
+    super()
+    this.exceptionHandler(ex)
+  }
+}

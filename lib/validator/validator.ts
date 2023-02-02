@@ -1,5 +1,6 @@
 import validator from 'validator'
 import { cloneDeep, get, unset } from 'lodash'
+import type { RouterContext } from 'koa-router'
 import { getValidatorMethodsName, getValidatorPropertykeys, isNotEmpty, isString } from '../utils'
 import { HttpException, ParamtersException } from '../exception/http-exception'
 export class Validator {
@@ -11,12 +12,12 @@ export class Validator {
     this.parsed = {}
   }
 
-  public async validate(ctx: any, alias: Record<string, any> = {}) {
+  public async validate(ctx: RouterContext | Record<string, any>, alias: Record<string, any> = {}) {
     this.data = {
       query: ctx.request.query,
-      body: (ctx.request as Record<string, any>).body,
-      params: (ctx.request as Record<string, any>).params,
-      header: (ctx.request as Record<string, any>).header,
+      body: ctx.request.body,
+      path: ctx.params,
+      header: ctx.header,
 
     }
     this.parsed = {
