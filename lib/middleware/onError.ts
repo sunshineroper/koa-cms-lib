@@ -29,7 +29,6 @@ export const onError = (err, ctx) => {
       request: `${ctx.method} ${ctx.path}`,
     })
     if (debug)
-      // eslint-disable-next-line no-console
-      console.log(err)
+      ctx.logger.debug(err)
   }
 }
