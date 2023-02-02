@@ -3,6 +3,7 @@ import { HttpStatus } from '../enums'
 import { isFunction } from '../utils/util'
 import { config } from '../config'
 import type { CodeMessage } from '../types'
+const debug = config.getItem('debug')
 export const onError = (err, ctx) => {
   ctx.type = 'application/json'
   const codeMessage = config.getItem('codeMessage') as CodeMessage
@@ -27,5 +28,8 @@ export const onError = (err, ctx) => {
       message: codeMessage.getMessage(9999),
       request: `${ctx.method} ${ctx.path}`,
     })
+    if (debug)
+      // eslint-disable-next-line no-console
+      console.log(err)
   }
 }
