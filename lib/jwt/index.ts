@@ -26,7 +26,7 @@ export class Token {
     }, this.secret)
   }
 
-  refreshToken(identity: string | number) {
+  createRefreshToken(identity: string | number) {
     if (!this.secret)
       throw new Error('secret can not be empty')
     const exp = +new Date() / 1000 + this.accessExpire
@@ -71,9 +71,9 @@ export class Token {
       const token = parts[1]
       if (/^Bearer$/i.test(scheme)) {
         const decode = this.verifyToken(token)
-        if (!get(decode, 'type') || !(get(decode, 'type') !== type))
+        if (!get(decode, 'type') || !(get(decode, 'type') === type))
           throw new AuthFailed({ code: 10250 })
-        if (!get(decode, 'scope') || !(get(decode, 'scope') !== 'koa-cms-lib'))
+        if (!get(decode, 'scope') || !(get(decode, 'scope') === 'koa-cms-lib'))
           throw new AuthFailed({ code: 10251 })
         return decode
       }
@@ -83,5 +83,10 @@ export class Token {
     }
   }
 }
-
 export const jwt = new Token(config.getItem('secret'), config.getItem('accessExpire'), config.getItem('refreshExpire'))
+export const generateToken = (identity: string | number) => {
+  return {
+    accessToken: jwt.createAccessToken(identity),
+    refreshToken: jwt.createRefreshToken(identity),
+  }
+}
