@@ -9,7 +9,7 @@ logger.set('console', new ConsoleTransport({
   level: 'DEBUG',
 }))
 
-if (get('loggerConfig', 'file', false)) {
+if (get(loggerConfig, 'file', false)) {
   logger.set('file', new FileTransport({
     dir: get(loggerConfig, 'dir', '/logs'),
     level: 'DEBUG',

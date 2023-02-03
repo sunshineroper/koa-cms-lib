@@ -39,6 +39,21 @@ export class FileTransport extends Transport {
    * @param  {Object} meta - meta information
    */
   log(level, args, meta) {
+    const baseDir = this.getParentDir()
+    const filename = this.getFileName()
+    if (fs.existsSync(baseDir)) {
+      const isOutManySize = this.checkFileSize(filename)
+      if (isOutManySize) {
+        this.renameFile(filename)
+        this.reload()
+      }
+      else if (!fs.existsSync(filename)) {
+        this.reload()
+      }
+    }
+    else {
+      this.reload()
+    }
     const buf = super.log(level, args, meta)
     if ((buf as unknown as Record<string, any>).length)
       this._write(buf)
@@ -82,21 +97,9 @@ export class FileTransport extends Transport {
    * @private
    */
   _createStream() {
-    const baseDir = this.getParentDir()
-    if (fs.statSync(baseDir)) {
-      const filename = this.getFileName()
-      const isOutManySize = this.checkFileSize(filename)
-      if (isOutManySize) {
-        this.renameFile(filename)
-        this.reload()
-      }
-    }
-    else {
-      this.reload()
-    }
     const filename = this.getFileName()
     if (!fs.existsSync(filename))
-      this.mkdir(filename)
+      this.mkdir(path.dirname(filename))
 
     // mkdirSync(path.dirname(this.options.file), { recursive: true })
 
@@ -109,11 +112,12 @@ export class FileTransport extends Transport {
         err.stack,
       )
     }
-    const stream = fs.createWriteStream(filename, { flags: 'a+' })
+    const stream: any = fs.createWriteStream(filename, { flags: 'a+' })
     // stream._onError = ''
     // only listen error once because stream will reload after error
     stream.once('error', onError)
-    // stream._onError = onError
+    // stream ._onError = onError
+    stream._onError = onError
     return stream
   }
 
@@ -125,8 +129,8 @@ export class FileTransport extends Transport {
   }
 
   checkFileSize(filename) {
-    const file = fs.statSync(filename)
-    return file > this.options.size
+    const file = fs.existsSync(filename) && fs.statSync(filename)
+    return file && (file.size > this.options.size)
   }
 
   renameFile(filename) {
@@ -141,7 +145,7 @@ export class FileTransport extends Transport {
   }
 
   mkdir(dirName) {
-    if (fs.existsSync(path.dirname(dirName))) {
+    if (fs.existsSync(dirName)) {
       return true
     }
     else {
