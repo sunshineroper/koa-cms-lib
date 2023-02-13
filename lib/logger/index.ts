@@ -12,7 +12,7 @@ logger.set('console', new ConsoleTransport({
 if (get(loggerConfig, 'file', false)) {
   logger.set('file', new FileTransport({
     dir: get(loggerConfig, 'dir', '/logs'),
-    level: 'DEBUG',
+    level: get('loggerConfig', 'level', 'debug'),
     size: get(loggerConfig, 'limit', 1024 * 1024 * 5),
   }))
 }

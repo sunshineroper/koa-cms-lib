@@ -98,3 +98,33 @@ export class TokenExpiredException extends HttpException {
     this.exceptionHandler(ex)
   }
 }
+
+export class RefreshException extends HttpException {
+  status = HttpStatus.UNAUTHORIZED
+  code = 10010
+  message = codeMessage.getMessage(this.code)
+  constructor(ex?: any) {
+    super()
+    this.exceptionHandler(ex)
+  }
+}
+
+export class Forbidden extends HttpException {
+  status = HttpStatus.FORBIDDEN
+  code = 10070
+  message = codeMessage.getMessage(this.code)
+  constructor(ex?: any) {
+    super()
+    this.exceptionHandler(ex)
+  }
+}
+
+export class RepeatException extends HttpException {
+  status = HttpStatus.BAD_REQUEST
+  code = 10070
+  message = codeMessage.getMessage(this.code)
+  constructor(ex?: any) {
+    super()
+    this.exceptionHandler(ex)
+  }
+}
