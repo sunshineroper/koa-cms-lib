@@ -5,6 +5,7 @@ export const isFunction = (val): val is Function => typeof val === 'function'
 export const isNotEmpty = (val: unknown): boolean => {
   return val !== '' && val !== null && val !== undefined
 }
+export const isBoolean = (val): val is boolean => typeof val === 'boolean'
 export const getValidatorPropertykeys = (instance, filterFunc) => {
   const keys = Reflect.ownKeys(instance)
   const names: string[] = keys.filter(filterFunc)

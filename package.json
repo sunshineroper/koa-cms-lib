@@ -21,6 +21,7 @@
   },
   "dependencies": {
     "@antfu/eslint-config": "^0.34.0",
+    "busboy": "^1.6.0",
     "dayjs": "^1.11.7",
     "egg-logger": "^3.2.1",
     "jsonwebtoken": "^9.0.0",
