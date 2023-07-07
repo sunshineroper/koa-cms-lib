@@ -29,7 +29,7 @@ export class Token {
   createRefreshToken(identity: string | number) {
     if (!this.secret)
       throw new Error('secret can not be empty')
-    const exp = +new Date() / 1000 + this.accessExpire
+    const exp = +new Date() / 1000 + this.refreshExpire
     return jwtGenerator.sign({
       identity,
       scope: 'koa-cms-lib',
@@ -70,7 +70,7 @@ export class Token {
       const scheme = parts[0]
       const token = parts[1]
       if (/^Bearer$/i.test(scheme)) {
-        const decode = this.verifyToken(token)
+        const decode = this.verifyToken(token, type)
         if (!get(decode, 'type') || !(get(decode, 'type') === type))
           throw new AuthFailed({ code: 10250 })
         if (!get(decode, 'scope') || !(get(decode, 'scope') === 'koa-cms-lib'))
