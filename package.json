@@ -1,6 +1,6 @@
 {
   "name": "koa-cms-lib",
-  "version": "1.0.4",
+  "version": "1.0.5",
   "description": "",
   "author": "",
   "license": "ISC",
@@ -21,12 +21,14 @@
   },
   "dependencies": {
     "@antfu/eslint-config": "^0.34.0",
+    "async-busboy": "^1.1.0",
     "busboy": "^1.6.0",
     "dayjs": "^1.11.7",
     "egg-logger": "^3.2.1",
     "jsonwebtoken": "^9.0.0",
     "koa": "^2.14.1",
     "lodash": "^4.17.21",
+    "uuid": "^9.0.0",
     "validator": "^13.7.0"
   },
   "devDependencies": {

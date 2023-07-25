@@ -1,8 +1,7 @@
-import type { IMiddleware, IRouterOptions } from 'koa-router'
 import Router from 'koa-router'
+import type { IMiddleware, IRouterOptions } from 'koa-router'
 import { get } from 'lodash'
 import { isBoolean } from '../utils/util'
-
 export const routeMetaInfo = new Map()
 interface TypeOptions extends IRouterOptions {
   mountpermission?
@@ -36,8 +35,8 @@ export class SRouter extends Router {
 
   sGet(name: string, path: string | RegExp, meta: TypeMeta | IMiddleware, ...middleware: IMiddleware[]) {
     if ('mount' in meta && meta.mount) {
-      const endpoint = `GET ${name}`
-      routeMetaInfo.set(endpoint, { permission: meta.permission, module: meta.module })
+      const endpoint = `GET ${path}`
+      routeMetaInfo.set(endpoint, { permission: meta.permission, module: meta.module, mount: meta.mount })
       this.get(name, path, ...middleware)
     }
     else if (!('mount' in meta)) {
@@ -48,8 +47,8 @@ export class SRouter extends Router {
 
   sPut(name: string, path: string | RegExp, meta: TypeMeta | IMiddleware, ...middleware: IMiddleware[]) {
     if ('mount' in meta && meta.mount) {
-      const endpoint = `PUT ${name}`
-      routeMetaInfo.set(endpoint, { permission: meta.permission, module: meta.module })
+      const endpoint = `PUT ${path}`
+      routeMetaInfo.set(endpoint, { permission: meta.permission, module: meta.module, mount: meta.mount })
       this.put(name, path, ...middleware)
     }
     else if (!('mount' in meta)) {
@@ -60,8 +59,8 @@ export class SRouter extends Router {
 
   sDelete(name: string, path: string | RegExp, meta: TypeMeta | IMiddleware, ...middleware: IMiddleware[]) {
     if ('mount' in meta && meta.mount) {
-      const endpoint = `DELETE ${name}`
-      routeMetaInfo.set(endpoint, { permission: meta.permission, module: meta.module })
+      const endpoint = `DELETE ${path}`
+      routeMetaInfo.set(endpoint, { permission: meta.permission, module: meta.module, mount: meta.mount })
       this.delete(name, path, ...middleware)
     }
     else if (!('mount' in meta)) {
@@ -74,8 +73,8 @@ export class SRouter extends Router {
 
   sPost(name: string, path: string | RegExp, meta: TypeMeta | IMiddleware, ...middleware: IMiddleware[]) {
     if ('mount' in meta && meta.mount) {
-      const endpoint = `POST ${name}`
-      routeMetaInfo.set(endpoint, { permission: meta.permission, module: meta.module })
+      const endpoint = `POST ${path}`
+      routeMetaInfo.set(endpoint, { permission: meta.permission, module: meta.module, mount: meta.mount })
       this.post(name, path, ...middleware)
     }
     else if (!('mount' in meta)) {
@@ -86,8 +85,8 @@ export class SRouter extends Router {
 
   sOptions(name: string, path: string | RegExp, meta: TypeMeta | IMiddleware, ...middleware: IMiddleware[]) {
     if ('mount' in meta && meta.mount) {
-      const endpoint = `OPTIONS ${name}`
-      routeMetaInfo.set(endpoint, { permission: meta.permission, module: meta.module })
+      const endpoint = `OPTIONS ${path}`
+      routeMetaInfo.set(endpoint, { permission: meta.permission, module: meta.module, mount: meta.mount })
       this.options(name, path, ...middleware)
     }
     else if (!('mount' in meta)) {

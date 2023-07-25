@@ -128,3 +128,13 @@ export class RepeatException extends HttpException {
     this.exceptionHandler(ex)
   }
 }
+
+export class FileLargeException extends HttpException {
+  status = HttpStatus.PAYLOAD_TOO_LARGE
+  code = 10110
+  message = codeMessage.getMessage(this.code)
+  constructor(ex?: any) {
+    super()
+    this.exceptionHandler(ex)
+  }
+}
